@@ -1,0 +1,234 @@
+openapi: 3.0.2
+info:
+  title: ''
+  version: ''
+paths:
+  /api/books/:
+    get:
+      operationId: listBooks
+      description: 'A view that list, update, delete, create book. <br/>
+      It can be paginated, searchable and filterable by multiple genres.  <br/>
+      By default we filter by OR operator with genere.  <br/>
+      If there is "and" query parmeter is specified as true , we does AND operation for the genere filter.'
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: genere
+        required: false
+        in: query
+        description: genere
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - Action
+            - Classics
+            - Comic
+            - Detective
+            - Fantasy
+            - Horror
+            - LF(Literary Fiction)
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=400&limit=100
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?offset=200&limit=100
+                    results:
+                      type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createBook
+      description: 'A view that can create the book.'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+  /api/books/{id}/:
+    get:
+      operationId: retrieveBook
+      description: 'A Detail view that get the book from id in the path.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this book.
+        schema:
+          type: string
+
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateBook
+      description: 'A view that list, update, delete, create book.
+
+        It can be paginated, searchable and filterable by multiple genres.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this book.
+        schema:
+          type: string
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateBook
+      description: 'A view that can update the certain book with id.'
+
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this book.
+        schema:
+          type: string
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Book'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroyBook
+      description: 'A view that delete the book with id.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this book.
+        schema:
+          type: string
+
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        genere:
+          type: array
+          items:
+            enum:
+            - Action
+            - Classics
+            - Comic
+            - Detective
+            - Fantasy
+            - Horror
+            - LF(Literary Fiction)
+            type: string
+          writeOnly: true
+        author:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        synopsis:
+          type: string
+        released_date:
+          type: string
+          format: date
+        price:
+          type: integer
+      required:
+      - genere
+      - author
+      - name
+      - synopsis
+      - released_date
